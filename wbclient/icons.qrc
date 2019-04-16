@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/line.png</file>
+        <file>res/oval.png</file>
+        <file>res/pen.png</file>
+        <file>res/rect.png</file>
+        <file>res/triangle.png</file>
+        <file>res/icon_checked.png</file>
+        <file>res/icon_empty.png</file>
+        <file>res/clearall.png</file>
+        <file>res/del.png</file>
+    </qresource>
+</RCC>
