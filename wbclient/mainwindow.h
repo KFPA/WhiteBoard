@@ -5,45 +5,49 @@
 #include "painterscene.h"
 #include "whiteboardconnection.h"
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+namespace wb{
 
-public:
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    class MainWindow : public QMainWindow
+    {
+        Q_OBJECT
 
-protected slots:
-    void onDrawLineAction();
-    void onDrawRectangleAction();
-    void onDrawOvalAction();
-    void onDrawTriangleAction();
-    void onDrawGraffitiAction();
-    void onUndo();
-    void onClearAll();
+    public:
+        MainWindow(QWidget *parent = 0);
+        ~MainWindow();
 
-    void onJoinButtonClicked();
+    protected slots:
+        void onDrawLineAction();
+        void onDrawRectangleAction();
+        void onDrawOvalAction();
+        void onDrawTriangleAction();
+        void onDrawGraffitiAction();
+        void onUndo();
+        void onClearAll();
 
-    void onJoined(QString name, int id);
-    void onUserLeft(QString name, int id);
-    void onFigureAdded(const QJsonObject &figure);
-    void onFigureDeleted(int id);
-    void onFiguresCleared(int ownerId);
-    void onErrorOccurred(const QString & desc);
+        void onJoinButtonClicked();
 
-    void onAddFigureReq(const QJsonObject &figure);
-    void onDeleteFigureReq(int id);
-    void onClearFiguresReq(int ownerId);
+        void onJoined(QString name, int id);
+        void onUserLeft(QString name, int id);
+        void onFigureAdded(const QJsonObject &figure);
+        void onFigureDeleted(int id);
+        void onFiguresCleared(int ownerId);
+        void onErrorOccurred(const QString & desc);
 
-protected:
-    void prepareJoinUI();
-    void preparePainterUI();
+        void onAddFigureReq(const QJsonObject &figure);
+        void onDeleteFigureReq(int id);
+        void onClearFiguresReq(int ownerId);
 
-protected:
-    PainterScene *m_scene;
-    WBConnection *m_conn;
-    QLineEdit *m_nameEdit;
-    QToolBar *m_toolBar;
-};
+    protected:
+        void prepareJoinUI();
+        void preparePainterUI();
+
+    protected:
+        PainterScene *m_scene;
+        WBConnection *m_conn;
+        QLineEdit *m_nameEdit;
+        QToolBar *m_toolBar;
+    };
+
+}
 
 #endif // MAINWINDOW_H

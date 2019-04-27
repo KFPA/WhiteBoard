@@ -3,141 +3,146 @@
 
 #include <QtWidgets>
 
-enum ToolType {
-    tt_Line = 1,
-    tt_Graffiti,
-    tt_Rectangle,
-    tt_Oval,
-    tt_Triangle
-};
+namespace wb{
 
-class Shape : public QGraphicsItem
-{
-public:
-    Shape(int type): m_type(type)
-      , m_strokeWidth(1.0f)
-      , m_strokeColor(Qt::black)
-      , m_fillColor(Qt::transparent)
-      , m_creatorId(-1), m_globalId(-1)
-      , m_localId(generateLocalId())
-    {}
+    enum ToolType {
+        tt_Line = 1,
+        tt_Graffiti,
+        tt_Rectangle,
+        tt_Oval,
+        tt_Triangle
+    };
 
-    virtual ~Shape(){}
+    class Shape : public QGraphicsItem
+    {
+    public:
+        Shape(int type): m_type(type)
+          , m_strokeWidth(1.0f)
+          , m_strokeColor(Qt::black)
+          , m_fillColor(Qt::transparent)
+          , m_creatorId(-1), m_globalId(-1)
+          , m_localId(generateLocalId())
+        {}
 
-    virtual void setStartPoint(const QPointF &pos) = 0;
-    virtual void setEndPoint(const QPointF &pos) = 0;
-    virtual void setStrokeWidth(float w) { m_strokeWidth = w; }
-    virtual void setStrokeColor(const QColor &clr){ m_strokeColor = clr; }
-    virtual void setFillColor(const QColor &clr){ m_fillColor = clr; }
-    virtual bool isValid(){ return true; }
-    virtual void serialize(QJsonObject &obj) = 0;
+        virtual ~Shape(){}
 
-    static int generateLocalId();
+        virtual void setStartPoint(const QPointF &pos) = 0;
+        virtual void setEndPoint(const QPointF &pos) = 0;
+        virtual void setStrokeWidth(float w) { m_strokeWidth = w; }
+        virtual void setStrokeColor(const QColor &clr){ m_strokeColor = clr; }
+        virtual void setFillColor(const QColor &clr){ m_fillColor = clr; }
+        virtual bool isValid(){ return true; }
+        virtual void serialize(QJsonObject &obj) = 0;
 
-    void setCreator(int id){ m_creatorId = id;}
-    int creator(){ return m_creatorId; }
-    void setGlobalId(int id) { m_globalId = id; }
-    int globalId(){ return m_globalId; }
-    void setLocalId(int id){ m_localId = id; }
-    int localId(){ return m_localId; }
+        static int generateLocalId();
 
-protected:
-    int m_type;
-    float m_strokeWidth;
-    QColor m_strokeColor;
-    QColor m_fillColor;
-    static int m_idBase;
-    int m_creatorId;
-    int m_globalId;
-    int m_localId;
-};
+        void setCreator(int id){ m_creatorId = id;}
+        int creator(){ return m_creatorId; }
+        void setGlobalId(int id) { m_globalId = id; }
+        int globalId(){ return m_globalId; }
+        void setLocalId(int id){ m_localId = id; }
+        int localId(){ return m_localId; }
 
-class SLine : public Shape
-{
-public:
-    SLine();
+    protected:
+        int m_type;
+        float m_strokeWidth;
+        QColor m_strokeColor;
+        QColor m_fillColor;
+        static int m_idBase;
+        int m_creatorId;
+        int m_globalId;
+        int m_localId;
+    };
 
-    QRectF boundingRect() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    class SLine : public Shape
+    {
+    public:
+        SLine();
 
-    void setStartPoint(const QPointF &pos) override;
-    void setEndPoint(const QPointF &pos) override;
-    void setStrokeWidth(float w) override;
-    void setStrokeColor(const QColor &clr) override;
-    bool isValid() override;
-    void serialize(QJsonObject &obj) override;
+        QRectF boundingRect() const override;
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-protected:
-    QPointF m_startPosScene;
-    QPointF m_endPosScene;
-    QLineF m_line;
-    QRectF m_rcBounding;
-    QPen m_pen;
-};
+        void setStartPoint(const QPointF &pos) override;
+        void setEndPoint(const QPointF &pos) override;
+        void setStrokeWidth(float w) override;
+        void setStrokeColor(const QColor &clr) override;
+        bool isValid() override;
+        void serialize(QJsonObject &obj) override;
 
-class SRectangle : public Shape
-{
-public:
-    SRectangle(int type = tt_Rectangle);
+    protected:
+        QPointF m_startPosScene;
+        QPointF m_endPosScene;
+        QLineF m_line;
+        QRectF m_rcBounding;
+        QPen m_pen;
+    };
 
-    QRectF boundingRect() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    class SRectangle : public Shape
+    {
+    public:
+        SRectangle(int type = tt_Rectangle);
 
-    void setStartPoint(const QPointF &pos) override;
-    void setEndPoint(const QPointF &pos) override;
-    void setStrokeWidth(float w) override;
-    void setStrokeColor(const QColor &clr) override;
-    void setFillColor(const QColor &clr) override;
-    bool isValid() override;
-    void serialize(QJsonObject &obj) override;
+        QRectF boundingRect() const override;
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-protected:
-    QPointF m_startPosScene;
-    QPointF m_endPosScene;
-    QRectF m_rcBounding;
-    QPen m_pen;
-};
+        void setStartPoint(const QPointF &pos) override;
+        void setEndPoint(const QPointF &pos) override;
+        void setStrokeWidth(float w) override;
+        void setStrokeColor(const QColor &clr) override;
+        void setFillColor(const QColor &clr) override;
+        bool isValid() override;
+        void serialize(QJsonObject &obj) override;
 
-class SOval : public SRectangle
-{
-public:
-    SOval();
+    protected:
+        QPointF m_startPosScene;
+        QPointF m_endPosScene;
+        QRectF m_rcBounding;
+        QPen m_pen;
+    };
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-};
+    class SOval : public SRectangle
+    {
+    public:
+        SOval();
 
-class STriangle : public SRectangle
-{
-public:
-    STriangle();
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    };
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-};
+    class STriangle : public SRectangle
+    {
+    public:
+        STriangle();
 
-class SGraffiti : public Shape
-{
-public:
-    SGraffiti();
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    };
 
-    QRectF boundingRect() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    class SGraffiti : public Shape
+    {
+    public:
+        SGraffiti();
 
-    void setStartPoint(const QPointF &pos) override;
-    void setEndPoint(const QPointF &pos) override;
-    void setStrokeWidth(float w) override;
-    void setStrokeColor(const QColor &clr) override;
-    bool isValid() override;
-    void serialize(QJsonObject &obj) override;
-    void setPath(QPainterPath &path);
+        QRectF boundingRect() const override;
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-protected:
-    QPointF m_startPosScene;
-    QPointF m_endPosScene;
-    QRectF m_rcBounding;
-    QPen m_pen;
-    QPainterPath m_path;
-    QPointF m_topLeftInScene;
-};
+        void setStartPoint(const QPointF &pos) override;
+        void setEndPoint(const QPointF &pos) override;
+        void setStrokeWidth(float w) override;
+        void setStrokeColor(const QColor &clr) override;
+        bool isValid() override;
+        void serialize(QJsonObject &obj) override;
+        void setPath(QPainterPath &path);
+
+    protected:
+        QPointF m_startPosScene;
+        QPointF m_endPosScene;
+        QRectF m_rcBounding;
+        QPen m_pen;
+        QPainterPath m_path;
+        QPointF m_topLeftInScene;
+    };
+
+
+}
 
 
 #endif // SHAPES_H

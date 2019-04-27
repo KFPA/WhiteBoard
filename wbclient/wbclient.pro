@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-01-25T10:04:16
+# Project created by QtCreator 2018-08-25T10:04:16
 #
 #-------------------------------------------------
 
@@ -29,13 +29,15 @@ SOURCES += main.cpp\
     painterscene.cpp \
     painterview.cpp \
     shapes.cpp \
-    whiteboardconnection.cpp
+    whiteboardconnection.cpp \
+    utils.cpp
 
 HEADERS  += mainwindow.h \
     painterscene.h \
     painterview.h \
     shapes.h \
-    whiteboardconnection.h
+    whiteboardconnection.h \
+    utils.h
 
 RESOURCES += \
     icons.qrc

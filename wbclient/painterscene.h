@@ -6,37 +6,46 @@
 #include <QJsonObject>
 #include <list>
 
-class PainterScene : public QGraphicsScene
-{
-    Q_OBJECT
-public:
-    PainterScene(QObject *parent = 0);
-    ~PainterScene();
+namespace wb{
 
-    void setToolType(int type);
+    class PainterScene : public QGraphicsScene
+    {
+        Q_OBJECT
+    public:
+        PainterScene(QObject *parent = 0);
+        ~PainterScene();
+    public:
+        void setBkImage(QImage bgImage){ m_bgImage = bgImage;}
+        void setToolType(int type);
 
-    void setUserId(int id){ m_id = id; }
+        void setUserId(int id){ m_id = id; }
 
-    void onFigureAdded(const QJsonObject &figure);
-    void onFigureDeleted(int id);
-    void onFiguresCleared(int ownerId);
-    void undo();
+        void onFigureAdded(const QJsonObject &figure);
+        void onFigureDeleted(int id);
+        void onFiguresCleared(int ownerId);
+        void undo();
 
-signals:
-    void addFigureReq(const QJsonObject &figure);
-    void deleteFigureReq(int id);
-    void clearFiguresReq(int ownerId);
+    signals:
+        void addFigureReq(const QJsonObject &figure);
+        void deleteFigureReq(int id);
+        void clearFiguresReq(int ownerId);
 
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *ev);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *ev);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *ev);
+    protected:
+        void mousePressEvent(QGraphicsSceneMouseEvent *ev);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent *ev);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *ev);
 
-protected:
-    int m_toolType;
-    int m_id;
-    Shape *m_currentShape;
-    std::list<Shape*> m_shapes;
-};
+    protected:
+        virtual void drawBackground(QPainter *painter, const QRectF &rect);
+    protected:
+        int m_toolType;
+        int m_id;
+        Shape *m_currentShape;
+        std::list<Shape*> m_shapes;
+        QImage m_bgImage;
+    };
+
+}
+
 
 #endif // PAINTERSCENE_H

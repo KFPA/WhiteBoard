@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+    wb::MainWindow w;
     w.setMinimumSize(600, 480);
 
     QString Application = QApplication::applicationDirPath();

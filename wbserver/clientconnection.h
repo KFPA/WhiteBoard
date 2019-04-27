@@ -3,36 +3,40 @@
 
 #include <QTcpSocket>
 
-class ClientConnection : public QTcpSocket
-{
-    Q_OBJECT
-public:
-    ClientConnection(QObject *parent = 0);
-    ~ClientConnection();
+namespace wb {
 
-    QString info();
+    class ClientConnection : public QTcpSocket
+    {
+        Q_OBJECT
+    public:
+        ClientConnection(QObject *parent = 0);
+        ~ClientConnection();
 
-    int id() { return m_id; }
-    void resetState(){ m_id = -1; }
+        QString info();
 
-    static int generateUserId();
-    static int generateFigureId();
-signals:
-    void userJoined(QByteArray name, int id);
-    void userLeft(QByteArray name, int id);
-    void addFigureReq(const QJsonObject &figure);
-    void deleteFigureReq(int globalId);
-    void clearReq(int ownerId);
+        int id() { return m_id; }
+        void resetState(){ m_id = -1; }
 
-protected slots:
-    void onReadyRead();
+        static int generateUserId();
+        static int generateFigureId();
+    signals:
+        void userJoined(QByteArray name, int id);
+        void userLeft(QByteArray name, int id);
+        void addFigureReq(const QJsonObject &figure);
+        void deleteFigureReq(int globalId);
+        void clearReq(int ownerId);
 
-protected:
-    static int m_idBase;
-    static int m_figureIdBase;
+    protected slots:
+        void onReadyRead();
 
-    QByteArray m_name;
-    int m_id;
-};
+    protected:
+        static int m_idBase;
+        static int m_figureIdBase;
+
+        QByteArray m_name;
+        int m_id;
+    };
+}
+
 
 #endif // CLIENTCONNECTION_H
