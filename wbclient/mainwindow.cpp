@@ -1,8 +1,12 @@
 #include "mainwindow.h"
 #include <QtWidgets>
+#include <QSizeF>
+#include <QImage>
+#include <QtDebug>
 #include "painterscene.h"
 #include "painterview.h"
 #include "utils.h"
+#include "webbrowser.h"
 
 namespace wb{
 
@@ -20,6 +24,8 @@ namespace wb{
 
     void MainWindow::prepareJoinUI()
     {
+
+
         QWidget *widget = new QWidget;
         QVBoxLayout *layout = new QVBoxLayout(widget);
         QLabel *nameLabel = new QLabel("Input Your Name:");
@@ -42,50 +48,59 @@ namespace wb{
     {
         if(!m_toolBar)
         {
-            QToolBar *toolbar = addToolBar("Figure Type");
+            QToolBar *toolbar = addToolBar("ToolBar");
             QActionGroup *actionGroup = new QActionGroup(toolbar);
             m_toolBar = toolbar;
+            toolbar->setFloatable(true);
 
-            QAction *action = toolbar->addAction(QIcon(":/res/line.png"),
-                                                 "Draw a Line",
-                                                 this, SLOT(onDrawLineAction()));
+            toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            QAction *action = toolbar->addAction(QIcon(":/res/pen.png"),
+                                        "Draw",
+                                        this, SLOT(onDrawGraffitiAction()));
             action->setCheckable(true);
             action->setChecked(true);
             action->setActionGroup(actionGroup);
 
+            action = toolbar->addAction(QIcon(":/res/line.png"),
+                                                 "Line",
+                                                 this, SLOT(onDrawLineAction()));
+            action->setCheckable(true);         
+            action->setActionGroup(actionGroup);
+
             action = toolbar->addAction(QIcon(":/res/rect.png"),
-                                        "Draw a Rectangle",
+                                        "Rectangle",
                                         this, SLOT(onDrawRectangleAction()));
             action->setCheckable(true);
             action->setActionGroup(actionGroup);
 
             action = toolbar->addAction(QIcon(":/res/oval.png"),
-                                        "Draw an Oval",
+                                        "Oval",
                                         this, SLOT(onDrawOvalAction()));
             action->setCheckable(true);
             action->setActionGroup(actionGroup);
 
             action = toolbar->addAction(QIcon(":/res/triangle.png"),
-                                        "Draw a Triangle",
+                                        "Triangle",
                                         this, SLOT(onDrawTriangleAction()));
             action->setCheckable(true);
             action->setActionGroup(actionGroup);
 
-            action = toolbar->addAction(QIcon(":/res/pen.png"),
-                                        "Draw as you like",
-                                        this, SLOT(onDrawGraffitiAction()));
-            action->setCheckable(true);
-            action->setActionGroup(actionGroup);
+
 
             toolbar->addSeparator();
 
-            action = toolbar->addAction(QIcon(":/res/del.png"), "Delete the last",
+            action = toolbar->addAction(QIcon(":/res/del.png"), "Back",
                                         this, SLOT(onUndo()));
             action->setActionGroup(actionGroup);
 
-            action = toolbar->addAction(QIcon(":/res/clearall.png"), "Clear All",
+            action = toolbar->addAction(QIcon(":/res/clearall.png"), "Clear",
                                         this, SLOT(onClearAll()));
             action->setActionGroup(actionGroup);
+
+            action = toolbar->addAction(QIcon(":/res/icon_empty.png"), "Save",
+                                        this, SLOT(onSave()));
+            action->setActionGroup(actionGroup);
+
         }
         else
         {
@@ -94,8 +109,8 @@ namespace wb{
 
         m_scene = new PainterScene();
         m_scene->setBkImage(wb::Utils::captureDesk());
+        m_scene->setToolType(tt_Graffiti);
         auto *view = new PainterView(m_scene);
-
         connect(m_scene, SIGNAL(addFigureReq(QJsonObject)),
                 this, SLOT(onAddFigureReq(QJsonObject)));
         connect(m_scene, SIGNAL(deleteFigureReq(int)),
@@ -108,37 +123,61 @@ namespace wb{
 
     void MainWindow::onDrawLineAction()
     {
-        m_scene->setToolType(tt_Line);
+        if(m_scene){
+             m_scene->setToolType(tt_Line);
+        }
+
     }
 
     void MainWindow::onDrawRectangleAction()
     {
-        m_scene->setToolType(tt_Rectangle);
+        if(m_scene){
+             m_scene->setToolType(tt_Rectangle);
+        }
     }
 
     void MainWindow::onDrawOvalAction()
     {
-        m_scene->setToolType(tt_Oval);
+        if(m_scene){
+             m_scene->setToolType(tt_Oval);
+        }
     }
 
     void MainWindow::onDrawTriangleAction()
     {
-        m_scene->setToolType(tt_Triangle);
+        if(m_scene){
+             m_scene->setToolType(tt_Triangle);
+        }
     }
 
     void MainWindow::onDrawGraffitiAction()
     {
-        m_scene->setToolType(tt_Graffiti);
+        if(m_scene){
+              m_scene->setToolType(tt_Graffiti);
+        }
     }
 
     void MainWindow::onUndo()
     {
-        m_scene->undo();
+        if(m_scene){
+           m_scene->undo();
+        }
+
     }
 
     void MainWindow::onClearAll()
     {
-        if(m_conn)m_conn->clearFigures(-1);
+        if(m_conn){
+            m_conn->clearFigures(-1);
+        }
+    }
+
+    void MainWindow::onSave()
+    {
+        if(m_scene){
+         QString strPath = QDir::currentPath()+"/data/tmp.png";
+         m_scene->save(strPath,"PNG");
+        }
     }
 
     void MainWindow::onJoinButtonClicked()
@@ -223,17 +262,23 @@ namespace wb{
 
     void MainWindow::onAddFigureReq(const QJsonObject &figure)
     {
-        if(m_conn) m_conn->addFigure(figure);
+        if(m_conn){
+            m_conn->addFigure(figure);
+        }
     }
 
     void MainWindow::onDeleteFigureReq(int id)
     {
-        if(m_conn) m_conn->deleteFigure(id);
+        if(m_conn){
+            m_conn->deleteFigure(id);
+        }
     }
 
     void MainWindow::onClearFiguresReq(int ownerId)
     {
-        if(m_conn) m_conn->clearFigures(ownerId);
+        if(m_conn){
+            m_conn->clearFigures(ownerId);
+        }
     }
 }
 

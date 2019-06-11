@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network
+QT       += axcontainer
 CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -30,14 +31,25 @@ SOURCES += main.cpp\
     painterview.cpp \
     shapes.cpp \
     whiteboardconnection.cpp \
-    utils.cpp
+    utils.cpp \
+    webbrowser.cpp \
+    fileinfos.cpp
 
 HEADERS  += mainwindow.h \
     painterscene.h \
     painterview.h \
     shapes.h \
     whiteboardconnection.h \
-    utils.h
+    utils.h \
+    webbrowser.h \
+    fileinfos.h
+
+
+
 
 RESOURCES += \
     icons.qrc
+
+
+include(Common/common.pri)
+include(HttpRequest/httpRequest.pri)

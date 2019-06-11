@@ -1,5 +1,6 @@
 #include "painterscene.h"
 #include <QDebug>
+#include "utils.h"
 
 namespace wb{
 
@@ -161,6 +162,15 @@ namespace wb{
         }
     }
 
+    bool PainterScene::save(QString path,const char* format)
+    {
+         qDebug() << "PainterScene::onSave";
+        QImage image(sceneRect().size().toSize(),QImage::Format_RGB32);
+        QPainter painter(&image);
+        this->render(&painter);
+        return image.save(path,format);
+    }
+
     void PainterScene::mousePressEvent(QGraphicsSceneMouseEvent *ev)
     {
         QGraphicsScene::mousePressEvent(ev);
@@ -172,32 +182,35 @@ namespace wb{
             case tt_Line:
                 m_currentShape = new SLine();
                 m_currentShape->setStrokeColor(Qt::blue);
-                m_currentShape->setStrokeWidth(12);
+                m_currentShape->setStrokeWidth(3);
                 break;
             case tt_Rectangle:
                 m_currentShape = new SRectangle();
-                m_currentShape->setStrokeWidth(8);
+                 m_currentShape->setStrokeColor(Qt::blue);
+                m_currentShape->setStrokeWidth(3);
                 break;
             case tt_Oval:
                 m_currentShape = new SOval();
-                m_currentShape->setStrokeWidth(0);
-                m_currentShape->setFillColor(Qt::red);
+                 m_currentShape->setStrokeColor(Qt::blue);
+                m_currentShape->setStrokeWidth(3);
                 break;
             case tt_Triangle:
                 m_currentShape = new STriangle();
-                m_currentShape->setStrokeWidth(2);
-                m_currentShape->setStrokeColor(QColor::fromRgbF(0.8f, 0.2f, 0.8f));
+                 m_currentShape->setStrokeColor(Qt::blue);
+                m_currentShape->setStrokeWidth(3);
                 break;
             case tt_Graffiti:
                 m_currentShape = new SGraffiti();
+                m_currentShape->setStrokeColor(Qt::blue);
                 m_currentShape->setStrokeWidth(3);
-                m_currentShape->setStrokeColor(QColor::fromRgbF(0.9f, 0.1f, 0.6f, 0.7f));
                 break;
             default:
                 return;
             }
 
-            if(m_currentShape == nullptr) return;
+            if(m_currentShape == nullptr){
+                return;
+            }
             addItem(m_currentShape);
             m_currentShape->setCreator(m_id);
             m_currentShape->setStartPoint(ev->scenePos());
@@ -242,7 +255,7 @@ namespace wb{
     {
         if(!m_bgImage.isNull() && painter != nullptr)
         {
-            painter->drawImage(0,0,m_bgImage);
+            painter->drawImage(wb::Utils::deskRect(),m_bgImage);
         }
     }
 }

@@ -2,6 +2,7 @@
 #define CLIENTCONNECTION_H
 
 #include <QTcpSocket>
+#include <QUdpSocket>
 
 namespace wb {
 

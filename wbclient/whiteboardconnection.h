@@ -2,6 +2,7 @@
 #define WHITEBOARDCONNECTION_H
 
 #include <QTcpSocket>
+#include <QUdpSocket>
 
 namespace wb{
 

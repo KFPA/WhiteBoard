@@ -11,6 +11,15 @@ namespace wb{
         ~Utils();
     public:
         static QImage captureDesk();
+
+        static QRect deskRect();
+
+        static bool openFile(QString path);
+
+        static bool jsonTest();
+
+        static QString qJsonObj2qStr(const QJsonObject& jsonObject);
+
     };
 
 }

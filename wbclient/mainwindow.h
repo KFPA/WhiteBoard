@@ -23,6 +23,7 @@ namespace wb{
         void onDrawGraffitiAction();
         void onUndo();
         void onClearAll();
+        void onSave();
 
         void onJoinButtonClicked();
 

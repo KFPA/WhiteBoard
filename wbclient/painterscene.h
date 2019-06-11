@@ -5,6 +5,7 @@
 #include "shapes.h"
 #include <QJsonObject>
 #include <list>
+#include <QString>
 
 namespace wb{
 
@@ -24,6 +25,7 @@ namespace wb{
         void onFigureDeleted(int id);
         void onFiguresCleared(int ownerId);
         void undo();
+        bool save(QString path,const char* format);
 
     signals:
         void addFigureReq(const QJsonObject &figure);
