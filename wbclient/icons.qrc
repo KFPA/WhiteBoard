@@ -9,5 +9,8 @@
         <file>res/icon_empty.png</file>
         <file>res/clearall.png</file>
         <file>res/del.png</file>
+        <file>res/shutdown.png</file>
+        <file>res/postil.png</file>
+        <file>res/close.png</file>
     </qresource>
 </RCC>

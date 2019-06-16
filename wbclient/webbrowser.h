@@ -2,10 +2,12 @@
 #define WEBBROWSER_H
 
 
-
-#include <ActiveQt/QAxWidget>
-#include <ActiveQt/QAxObject>
-
+#include <QPropertyAnimation>
+#include <QMouseEvent>
+#include <QWidget>
+#include "officewindow.h"
+#include "utils.h"
+#include "mainwindow.h"
 
 namespace wb{
 
@@ -15,11 +17,12 @@ namespace wb{
         POSTIL_DOC = 2   //!< 批注模式
     };
 
-    class WebBrowser : public QAxWidget
+    class WebBrowser : public QWidget
     {
+         Q_OBJECT
     public:
-        WebBrowser(QString strPath);
-        ~WebBrowser();
+        explicit WebBrowser();
+        ~WebBrowser() override;
 
 
     public:
@@ -29,16 +32,42 @@ namespace wb{
          * @brief 设置显示文档
          * @param strPath 显示文档的绝对路径
          * */
-        void setDocPath(QString strPath);
+        bool showOffice(QString strPath);
+
+         void setInfo(WBInfo wbInfo){_wbInfo = wbInfo;}
+    protected:
+        void mouseMoveEvent(QMouseEvent *event) override;
+        void paintEvent(QPaintEvent *paint) override;
+        bool eventFilter(QObject *obj, QEvent *event) override;
 
     protected:
         void init();
         void uint();
 
-        bool show(QString strPath);
+        void initCtrlWidget();
+
+        void initOfficeWidget();
+
+
+        void resizeCtrlWidget();
+        void checkCtrlWidgetRect(QPoint point);
+
+
     private:
+        QWidget*            _ctrlsWidget;
+        OfficeWindow*       _officeWidget;
+        QPropertyAnimation* _ctrlOpenAnimation;
+        QPropertyAnimation* _ctrlCloseAnimation;
+
+        QPixmap    _pixmap;
         DocMode    _docMode;
-        QString    _docPath;
+        WBInfo     _wbInfo;
+        MainWindow mainWin;
+    signals:
+
+    public slots:
+        void closeDisplay();
+        void postilOffice();
     };
 
 

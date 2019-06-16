@@ -1,0 +1,29 @@
+#ifndef CONFIGSINGLETON_H
+#define CONFIGSINGLETON_H
+
+namespace wb{
+
+    class ConfigSingleton
+    {
+     private:
+        ConfigSingleton();
+        ~ConfigSingleton();
+      
+        
+    private:
+        static class SingletonInstance{
+            static ConfigSingleton* instance = new ConfigSingleton();
+        }
+        
+    public:
+        static ConfigSingleton* getInstance(){
+            return SingletonInstance::instance;
+        }    
+    };
+    
+
+
+}
+
+
+#endif // CONFIGSINGLETON_H

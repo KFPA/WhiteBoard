@@ -1,0 +1,16 @@
+#include "configsingleton.h"
+
+namespace wb{
+
+    ConfigSingleton::ConfigSingleton()
+    {
+
+    }
+    
+    ConfigSingleton::~ConfigSingleton()
+    {
+        
+    }
+
+}
+

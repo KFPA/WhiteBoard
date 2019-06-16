@@ -32,8 +32,10 @@ SOURCES += main.cpp\
     shapes.cpp \
     whiteboardconnection.cpp \
     utils.cpp \
+    fileinfos.cpp \
+    config.cpp \
     webbrowser.cpp \
-    fileinfos.cpp
+    officewindow.cpp
 
 HEADERS  += mainwindow.h \
     painterscene.h \
@@ -41,15 +43,19 @@ HEADERS  += mainwindow.h \
     shapes.h \
     whiteboardconnection.h \
     utils.h \
+    fileinfos.h \
+    singleton.h \
+    config.h \
+    data_define.h \
     webbrowser.h \
-    fileinfos.h
+    officewindow.h
 
 
 
 
 RESOURCES += \
-    icons.qrc
-
+    icons.qrc \
+    images.qrc
 
 include(Common/common.pri)
 include(HttpRequest/httpRequest.pri)

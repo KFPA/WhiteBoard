@@ -7,14 +7,16 @@
 #include "painterview.h"
 #include "utils.h"
 #include "webbrowser.h"
+#include "config.h"
+
 
 namespace wb{
 
     MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), m_scene(nullptr)
-        , m_conn(nullptr), m_toolBar(nullptr), m_nameEdit(nullptr)
+        , m_conn(nullptr), m_toolBar(nullptr)
     {
-        prepareJoinUI();
+
     }
 
     MainWindow::~MainWindow()
@@ -22,32 +24,12 @@ namespace wb{
 
     }
 
-    void MainWindow::prepareJoinUI()
-    {
-
-
-        QWidget *widget = new QWidget;
-        QVBoxLayout *layout = new QVBoxLayout(widget);
-        QLabel *nameLabel = new QLabel("Input Your Name:");
-        layout->addWidget(nameLabel);
-
-        m_nameEdit = new QLineEdit("Panda");
-        layout->addWidget(m_nameEdit);
-
-        auto btn = new QPushButton("Join");
-        connect(btn, SIGNAL(clicked(bool)),
-                this, SLOT(onJoinButtonClicked()));
-        layout->addWidget(btn);
-
-        layout->addStretch(1);
-
-        setCentralWidget(widget);
-    }
-
     void MainWindow::preparePainterUI()
     {
+
         if(!m_toolBar)
         {
+
             QToolBar *toolbar = addToolBar("ToolBar");
             QActionGroup *actionGroup = new QActionGroup(toolbar);
             m_toolBar = toolbar;
@@ -99,6 +81,8 @@ namespace wb{
 
             action = toolbar->addAction(QIcon(":/res/icon_empty.png"), "Save",
                                         this, SLOT(onSave()));
+            action = toolbar->addAction(QIcon(":/res/close.png"),"Close",
+                                        this, SLOT(onClose()));
             action->setActionGroup(actionGroup);
 
         }
@@ -108,7 +92,7 @@ namespace wb{
         }
 
         m_scene = new PainterScene();
-        m_scene->setBkImage(wb::Utils::captureDesk());
+        //m_scene->setBkImage(wb::Utils::captureDesk());
         m_scene->setToolType(tt_Graffiti);
         auto *view = new PainterView(m_scene);
         connect(m_scene, SIGNAL(addFigureReq(QJsonObject)),
@@ -119,6 +103,14 @@ namespace wb{
                 this, SLOT(onClearFiguresReq(int)));
 
         setCentralWidget(view);
+        restoreGeometry(singleton<Config>::GetInstance()->getGeometry());
+        restoreState(singleton<Config>::GetInstance()->getState());
+    }
+
+    void MainWindow::closeEvent(QCloseEvent *event)
+    {
+        singleton<Config>::GetInstance()->setGeometry(saveGeometry());
+        singleton<Config>::GetInstance()->setState(saveState());
     }
 
     void MainWindow::onDrawLineAction()
@@ -174,20 +166,30 @@ namespace wb{
 
     void MainWindow::onSave()
     {
+        bool bRet = false;
         if(m_scene){
-         QString strPath = QDir::currentPath()+"/data/tmp.png";
-         m_scene->save(strPath,"PNG");
+         QString strPath = QDir::currentPath()+"/data/postilRes.png";
+         bRet = m_scene->save(strPath,"PNG");
+        }
+        if(!bRet){
+           QMessageBox::information(nullptr, "Information", "Save failed!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         }
     }
 
-    void MainWindow::onJoinButtonClicked()
+    void MainWindow::onClose()
     {
-        if(!m_conn)
+        close();
+    }
+
+    bool MainWindow::Join()
+    {
+        if(!m_conn && m_wbInfo.isValid())
         {
             m_conn = new WBConnection(this);
-            QString strName = m_nameEdit->text();
             connect(m_conn, SIGNAL(joined(QString,int)),
                     this, SLOT(onJoined(QString,int)));
+            connect(m_conn, SIGNAL(errorOccurred(const QString)),
+                    this,SLOT(onErrorOccurred(const QString)));
             connect(m_conn, SIGNAL(userLeft(QString,int)),
                     this, SLOT(onUserLeft(QString,int)));
             connect(m_conn, SIGNAL(figureAdded(QJsonObject)),
@@ -196,16 +198,19 @@ namespace wb{
                     this, SLOT(onFigureDeleted(int)));
             connect(m_conn, SIGNAL(figureCleared(int)),
                     this, SLOT(onFiguresCleared(int)));
-            m_conn->join(strName, "127.0.0.1", 9001);
+            m_conn->join(m_wbInfo._name, m_wbInfo._ip, m_wbInfo._port);
+            return true;
         }
+        return false;
     }
+
+
 
     void MainWindow::onJoined(QString name, int id)
     {
         if(id == m_conn->id())
         {
-            setWindowTitle(QString("wbclient - %1").arg(m_nameEdit->text()));
-            m_nameEdit = nullptr;
+            setWindowTitle(QString("wbclient - %1").arg(name));
             preparePainterUI();
             m_scene->setUserId(id);
         }
@@ -222,7 +227,7 @@ namespace wb{
             setWindowTitle("wbclient");
             m_scene = nullptr;
             removeToolBar(m_toolBar);
-            prepareJoinUI();
+            Join();
         }
         else
         {
@@ -251,12 +256,16 @@ namespace wb{
         {
             m_scene = nullptr;
             removeToolBar(m_toolBar);
-            prepareJoinUI();
+            Join();
         }
         if(m_conn)
         {
             m_conn->deleteLater();
             m_conn = nullptr;
+        }
+        if(QMessageBox::critical(nullptr, "critical", "Server error!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes){
+            QApplication* app;
+            app->exit(0);
         }
     }
 
@@ -280,5 +289,7 @@ namespace wb{
             m_conn->clearFigures(ownerId);
         }
     }
+
+
 }
 

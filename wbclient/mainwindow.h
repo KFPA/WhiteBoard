@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "painterscene.h"
 #include "whiteboardconnection.h"
+#include "utils.h"
 
 namespace wb{
 
@@ -14,7 +15,10 @@ namespace wb{
     public:
         MainWindow(QWidget *parent = 0);
         ~MainWindow();
+    public:
+        void setInfo(WBInfo wbInfo){m_wbInfo = wbInfo;}
 
+        bool Join();
     protected slots:
         void onDrawLineAction();
         void onDrawRectangleAction();
@@ -24,8 +28,9 @@ namespace wb{
         void onUndo();
         void onClearAll();
         void onSave();
+        void onClose();
 
-        void onJoinButtonClicked();
+
 
         void onJoined(QString name, int id);
         void onUserLeft(QString name, int id);
@@ -41,13 +46,16 @@ namespace wb{
     protected:
         void prepareJoinUI();
         void preparePainterUI();
+        void closeEvent(QCloseEvent *event);
 
     protected:
         PainterScene *m_scene;
         WBConnection *m_conn;
-        QLineEdit *m_nameEdit;
         QToolBar *m_toolBar;
+        WBInfo   m_wbInfo;
     };
+
+
 
 }
 
